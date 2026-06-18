@@ -27,4 +27,12 @@ router.get('/v1/basket', (req, res) => {
   res.json(basket);
 });
 
+router.delete('/v1/basket/:id', (req, res) => {
+  const basket = db.prepare('SELECT id FROM baskets WHERE id = ?').get(req.params.id);
+  if (!basket) return res.status(404).json({ error: 'Basket not found' });
+  db.prepare('DELETE FROM basket_items WHERE basket_id = ?').run(basket.id);
+  db.prepare('DELETE FROM baskets WHERE id = ?').run(basket.id);
+  res.status(204).send();
+});
+
 module.exports = router;
