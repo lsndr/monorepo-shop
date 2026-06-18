@@ -1,0 +1,15 @@
+{
+  "name": "basket-api",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/basket-api/src",
+  "targets": {
+    "serve": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node apps/basket-api/src/main.js",
+        "cwd": "{workspaceRoot}"
+      }
+    }
+  }
+}
