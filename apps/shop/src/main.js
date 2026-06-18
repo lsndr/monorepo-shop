@@ -5,7 +5,7 @@ require('./seed')();
 const app = express();
 app.use(express.json());
 app.use('/', require('./routes/products'));
-app.use('/', require('./routes/basket'));
+app.use('/', require('./routes/basket-api'));
 app.use('/', require('./routes/order'));
 app.get('/', (_, res) => res.json({ status: 'ok', service: 'shop-api' }));
 
