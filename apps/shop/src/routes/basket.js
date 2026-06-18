@@ -27,6 +27,31 @@ router.get('/v1/basket', (req, res) => {
   res.json(basket);
 });
 
+router.get('/v2/basket/compare', (req, res) => {
+  const { a, b } = req.query;
+  if (!a || !b) return res.status(400).json({ error: 'a and b basket ids are required' });
+
+  const basketA = db.prepare('SELECT * FROM baskets WHERE id = ?').get(a);
+  const basketB = db.prepare('SELECT * FROM baskets WHERE id = ?').get(b);
+  if (!basketA || !basketB) return res.status(404).json({ error: 'One or both baskets not found' });
+
+  basketA.items = db.prepare('SELECT * FROM basket_items WHERE basket_id = ?').all(a);
+  basketB.items = db.prepare('SELECT * FROM basket_items WHERE basket_id = ?').all(b);
+
+  const mapA = Object.fromEntries(basketA.items.map(i => [i.product_id, i.quantity]));
+  const mapB = Object.fromEntries(basketB.items.map(i => [i.product_id, i.quantity]));
+  const allIds = new Set([...Object.keys(mapA), ...Object.keys(mapB)]);
+
+  const diff = [];
+  for (const id of allIds) {
+    const qA = mapA[id] ?? 0;
+    const qB = mapB[id] ?? 0;
+    if (qA !== qB) diff.push({ product_id: Number(id), basket_a: qA, basket_b: qB });
+  }
+
+  res.json({ basket_a: basketA, basket_b: basketB, diff });
+});
+
 router.delete('/v1/basket/:id', (req, res) => {
   const basket = db.prepare('SELECT id FROM baskets WHERE id = ?').get(req.params.id);
   if (!basket) return res.status(404).json({ error: 'Basket not found' });
