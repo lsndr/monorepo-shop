@@ -3,7 +3,7 @@ const db = require('../db');
 
 const router = Router();
 
-router.post('/basket', (req, res) => {
+router.post('/v1/basket', (req, res) => {
   const { userId, items } = req.body;
   if (!userId || !Array.isArray(items)) {
     return res.status(400).json({ error: 'userId and items are required' });
@@ -18,7 +18,7 @@ router.post('/basket', (req, res) => {
   res.status(201).json(created);
 });
 
-router.get('/basket', (req, res) => {
+router.get('/v1/basket', (req, res) => {
   const { userId } = req.query;
   if (!userId) return res.status(400).json({ error: 'userId is required' });
   const basket = db.prepare('SELECT * FROM baskets WHERE user_id = ? ORDER BY id DESC LIMIT 1').get(userId);

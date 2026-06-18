@@ -3,7 +3,7 @@ const db = require('../db');
 
 const router = Router();
 
-router.post('/order', (req, res) => {
+router.post('/v1/order', (req, res) => {
   const { userId } = req.body;
   if (!userId) return res.status(400).json({ error: 'userId is required' });
 
